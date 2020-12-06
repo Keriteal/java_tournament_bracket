@@ -1,0 +1,14 @@
+tbm:
+  socket:
+    host: "localhost"
+    port: 8081
+    
+spring:
+  datasource:
+    url: "jdbc:mysql://127.0.0.1:3306/tournament_bracket?serverTimezone=UTC"
+    username: wx
+    password: wuxiao.04092313
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: update

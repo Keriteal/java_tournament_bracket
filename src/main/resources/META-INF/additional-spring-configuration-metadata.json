@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "tbm.socket.host",
+    "type": "java.lang.String",
+    "description": "Hostname of socket server"
+  },
+  {
+    "name": "tbm.socket.port",
+    "type": "java.lang.Integer",
+    "description": "port of socket server"
+  }
+]}
