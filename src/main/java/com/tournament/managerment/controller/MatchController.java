@@ -52,8 +52,6 @@ public class MatchController {
 	}
 
 	@ApiOperation(value = "获取比赛信息")
-	@ApiResponses({ @ApiResponse(responseCode = "200", description = "找到指定比赛"),
-			@ApiResponse(responseCode = "404", description = "找不到比赛") })
 	@GetMapping(value = "/{id}", produces = { MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<TournamentInfoDTO> findTournamentById(@ApiParam("TournamentId") @PathVariable String id)
 			throws TournamentNotFoundException {

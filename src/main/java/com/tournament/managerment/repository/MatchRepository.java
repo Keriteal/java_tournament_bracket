@@ -40,6 +40,10 @@ public interface MatchRepository extends JpaRepository<MatchDO, String> {
 	@Query(value = "FROM MatchDO M WHERE M.matchRound IN ( SELECT MAX(M.matchRound) FROM MatchDO M WHERE M.tournamentId = :tourId) AND M.tournamentId = :tourId")
 	MatchDO getLastMatchByTournamentId(@Param("tourId") String tournamentId);
 
+	//获取该tournament最后一场的轮次
+	@Query(value = "SELECT MAX(M.matchRound) FROM MatchDO M WHERE M.tournamentId = :tournamentId")
+	int getLastRoundByTournamentId(@Param("tournamentId") String tournamentId);
+
 	//设置一场对战结果set result
 	@Transactional
 	@Modifying

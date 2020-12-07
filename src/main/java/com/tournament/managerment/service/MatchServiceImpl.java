@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.tournament.managerment.entity.TournamentDO;
 import com.tournament.managerment.exception.tournament.FormatNotSupportException;
+import com.tournament.managerment.exception.tournament.TournamentNotFoundException;
 import com.tournament.managerment.repository.TournamentRepository;
 import com.tournament.managerment.repository.UserRepository;
 import org.slf4j.Logger;
@@ -19,7 +20,6 @@ import com.tournament.managerment.dto.CreateTournamentResponseDTO;
 import com.tournament.managerment.dto.RoundInfo;
 import com.tournament.managerment.dto.SetMatchResultResponseDTO;
 import com.tournament.managerment.dto.TournamentInfoDTO;
-import com.tournament.managerment.dto.TournamentListDTO;
 import com.tournament.managerment.entity.MatchDO;
 import com.tournament.managerment.entity.MatchDO.Result;
 import com.tournament.managerment.entity.MatchDO.Status;
@@ -48,7 +48,12 @@ public class MatchServiceImpl implements MatchService {
 
 
 	@Override
-	public TournamentInfoDTO getTournamentInfo(String tournamentId) {
+	public TournamentInfoDTO getTournamentInfo(String tournamentId) throws TournamentNotFoundException {
+
+		TournamentDO tournamentDO = tournamentRepository.getTournamentByTournamentId(tournamentId);
+		if(tournamentDO == null) {
+			throw new TournamentNotFoundException(tournamentId);
+		}
 
 		String format = tournamentRepository.getFormatByTournamentId(tournamentId);
 		List<MatchDO> matches = matchRepository.findMatchByTournamentId(tournamentId);
@@ -74,10 +79,10 @@ public class MatchServiceImpl implements MatchService {
 		logger.info("tournamentId:{} lastRound:{}", tournamentId, lastRound);
 
 		// Get tournament bracket
-		RoundInfo[] rounds = new RoundInfo[lastRound + 1];
+		RoundInfo[] rounds = new RoundInfo[lastRound];
 		if(format.equals("SINGLE")){
-			int tableCount = 1;
-			for (int round = lastRound; round >= 0; round--) {  //初始化rounds
+			int tableCount = 2;
+			for (int round = lastRound-1; round >= 0; round--) {  //初始化rounds
 				rounds[round] = new RoundInfo(tableCount);
 				tableCount = tableCount * 2;
 			}
@@ -85,12 +90,13 @@ public class MatchServiceImpl implements MatchService {
 				rounds[match.getRound() - 1].setTeam((match.getTable() - 1) * 2, match.getTeamOne());
 				rounds[match.getRound() - 1].setTeam((match.getTable() - 1) * 2 + 1, match.getTeamTwo());
 			}
+			//logger.info("tournamentId:{} rounds:{}", tournamentId, rounds);
 		}
 		else if(format.equals("CONSOLATION")) {
-			//
+			//安慰赛的tournament bracket获取算法
 		}
 		else {
-			//
+			//其他赛制（可扩展）
 		}
 
 		// Get winner
@@ -101,7 +107,7 @@ public class MatchServiceImpl implements MatchService {
 			} else if (lastMatch.getResult() == Result.TEAM_TWO) {
 				winner = lastMatch.getTeamTwo();
 			} else {
-				winner = "";
+				winner = "Error";
 			}
 		}
 
@@ -200,7 +206,10 @@ public class MatchServiceImpl implements MatchService {
 		}
 		logger.info("Set match result {}", success);
 		logger.info("Winner: {}", winner);
-		if (success && winner != null) {
+
+		int lastRound = matchRepository.getLastRoundByTournamentId(tourId);
+
+		if (success && winner != null && lastRound != tourRound) {
 			if (tourTable % 2 == 1) {
 				logger.info("Set match {}.{}.{} result team one to {}",
 						tourId, tourRound + 1, tourTable / 2 + 1, winner);
@@ -211,10 +220,10 @@ public class MatchServiceImpl implements MatchService {
 				success = matchRepository.setTeamTwo(tourId, tourRound + 1, tourTable / 2, winner) == 1;
 			}
 		}
-		socketHandler.sendUpdatedToAll(getTournamentInfo(tourId).getRounds());
+		//socketHandler.sendUpdatedToAll(getTournamentInfo(tourId).getRounds());
 		return SetMatchResultResponseDTO.builder()
 				.withWinner(winner)
-				.withGrouped(false)
+				.withGrouped(success)
 				.build();
 	}
 

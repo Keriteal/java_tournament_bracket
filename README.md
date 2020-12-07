@@ -2,10 +2,10 @@
 
 - [x] get all tournament    GET /alltournament     
 
-- [ ] get all matches' information of the tournament    GET /tournament/:id
+- [x] get all matches' information of the tournament    GET /tournament/:id
 
-- [ ] get information of the team    GET /team/:teamName
+- [x] get information of the team    GET /team/:teamName
 
-- [x] creat one tournament    POST /tournament/:userName
+- [x] create one tournament    POST /tournament/:userName
 
-- [ ] set result of the match    Post /tournament/:id/:round/:table
+- [x] set result of the match    Post /tournament/:id/:round/:table

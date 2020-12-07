@@ -22,4 +22,8 @@ public interface TournamentRepository extends JpaRepository<TournamentDO, String
     //获取某个tournamentId对应的format
     @Query(value = "SELECT tour.format FROM TournamentDO tour WHERE tour.tournamentId = :tournamentId")
     String getFormatByTournamentId(@Param("tournamentId") String tournamentId);
+
+    //通过tournamentId获取该锦标赛信息
+    @Query(value = "FROM TournamentDO tour WHERE tour.tournamentId = :tournamentId")
+    TournamentDO getTournamentByTournamentId(@Param("tournamentId") String tournamentId);
 }
