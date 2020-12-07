@@ -30,10 +30,6 @@ public interface MatchRepository extends JpaRepository<MatchDO, String> {
 	@Query(value = "FROM MatchDO M WHERE M.tournamentId = :tourId")
 	List<MatchDO> findMatchByTournamentId(@Param("tourId") String tournamentId);
 
-	//获取所有tournamentId
-	@Query(value = "SELECT M.tournamentId FROM MatchDO M GROUP BY M.tournamentId")
-	List<String> getTournaments();
-
 	//通过tournamentId获取这轮竞标赛的所有参赛队伍teams
 	@Query(value = "(SELECT team_one FROM match_record WHERE tournament_id = :tourId )"
 			+ " UNION "

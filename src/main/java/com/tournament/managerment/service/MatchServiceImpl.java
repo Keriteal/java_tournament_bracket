@@ -5,6 +5,10 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.tournament.managerment.entity.TournamentDO;
+import com.tournament.managerment.exception.tournament.FormatNotSupportException;
+import com.tournament.managerment.repository.TournamentRepository;
+import com.tournament.managerment.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,25 +32,28 @@ import com.tournament.managerment.util.UuidUtil;
 @Service
 public class MatchServiceImpl implements MatchService {
 	private final static Logger logger = LoggerFactory.getLogger(MatchServiceImpl.class);
+
+	private final UserRepository userRepository;
+	private final TournamentRepository tournamentRepository;
 	private final MatchRepository matchRepository;
 	private final BracketSocketEventHandler socketHandler;
 
 	@Autowired
-	public MatchServiceImpl(MatchRepository matchRepository, BracketSocketEventHandler socketHandler) {
+	public MatchServiceImpl(UserRepository userRepository, TournamentRepository tournamentRepository, MatchRepository matchRepository, BracketSocketEventHandler socketHandler) {
+		this.userRepository=userRepository;
+		this.tournamentRepository = tournamentRepository;
 		this.matchRepository = matchRepository;
 		this.socketHandler = socketHandler;
 	}
 
-	@Override
-	public TournamentListDTO getTournamentList() {
-		TournamentListDTO tournamentList = new TournamentListDTO(matchRepository.getTournaments());
-		return tournamentList;
-	}
 
 	@Override
 	public TournamentInfoDTO getTournamentInfo(String tournamentId) {
+
+		String format = tournamentRepository.getFormatByTournamentId(tournamentId);
 		List<MatchDO> matches = matchRepository.findMatchByTournamentId(tournamentId);
 		List<String> teams = matchRepository.getTeamsByTournamentId(tournamentId);
+
 		int lastRound = -1;
 		if (teams.indexOf("") != -1) {
 			teams.remove(teams.indexOf(""));
@@ -64,17 +71,26 @@ public class MatchServiceImpl implements MatchService {
 			}
 			lastRound = Math.max(match.getRound(), lastRound);
 		}
+		logger.info("tournamentId:{} lastRound:{}", tournamentId, lastRound);
 
 		// Get tournament bracket
 		RoundInfo[] rounds = new RoundInfo[lastRound + 1];
-		int tableCount = 1;
-		for (int round = lastRound; round >= 0; round--) {
-			rounds[round] = new RoundInfo(tableCount);
-			tableCount = tableCount * 2;
+		if(format.equals("SINGLE")){
+			int tableCount = 1;
+			for (int round = lastRound; round >= 0; round--) {  //初始化rounds
+				rounds[round] = new RoundInfo(tableCount);
+				tableCount = tableCount * 2;
+			}
+			for (MatchDO match : matches) {
+				rounds[match.getRound() - 1].setTeam((match.getTable() - 1) * 2, match.getTeamOne());
+				rounds[match.getRound() - 1].setTeam((match.getTable() - 1) * 2 + 1, match.getTeamTwo());
+			}
 		}
-		for (MatchDO match : matches) {
-			rounds[match.getRound() - 1].setTeam((match.getTable() - 1) * 2, match.getTeamOne());
-			rounds[match.getRound() - 1].setTeam((match.getTable() - 1) * 2 + 1, match.getTeamTwo());
+		else if(format.equals("CONSOLATION")) {
+			//
+		}
+		else {
+			//
 		}
 
 		// Get winner
@@ -91,6 +107,7 @@ public class MatchServiceImpl implements MatchService {
 
 		TournamentInfoDTO info = TournamentInfoDTO.builder()
 				.withTournamentId(tournamentId)
+				.withFormat(format)
 				.withRounds(Arrays.asList(rounds))
 				.withTeams(teams)
 				.withStatus(status)
@@ -100,8 +117,8 @@ public class MatchServiceImpl implements MatchService {
 	}
 
 	@Override
-	public CreateTournamentResponseDTO createTournament(CreateTournamentRequestDTO ctr)
-			throws InvalidTeamCountException {
+	public CreateTournamentResponseDTO createTournament(String userName, CreateTournamentRequestDTO ctr)
+			throws InvalidTeamCountException, FormatNotSupportException {
 		String[] teamNames = ctr.getTeams();
 		int teamCount = Array.getLength(ctr.getTeams());
 
@@ -112,32 +129,50 @@ public class MatchServiceImpl implements MatchService {
 
 		String uuid = UuidUtil.getUuid();
 		logger.debug("Generated UUID: {}", uuid);
-		List<MatchDO> matches = new LinkedList<MatchDO>();
-		int tableCount = teamCount / 2;
-		for (int round = 1; round <= Math.log(teamCount) + 1; round++) {
-			for (int table = 1; table <= tableCount; table++) {
-				MatchDO.Builder matchBuilder = MatchDO.builder();
-				matchBuilder.withTournamentId(uuid)
-						.withTourRound(round)
-						.withTourTable(table)
-						.withStatus(Status.PENDING)
-						.withResult(Result.NOT_FINISHED)
-						.build();
-				if (round == 1) {
-					matchBuilder
-							.withStatus(Status.READY)
-							.withTeamOne(teamNames[2 * (table - 1)])
-							.withTeamTwo(teamNames[2 * table - 1]);
+		//判断赛制
+		if(ctr.getFormat().equals("SINGLE")) {
+			List<MatchDO> matches = new LinkedList<>();
+			int tableCount = teamCount / 2;
+			for (int round = 1; round <= Math.log(teamCount) + 1; round++) {
+				for (int table = 1; table <= tableCount; table++) {
+					MatchDO.Builder matchBuilder = MatchDO.builder();
+					matchBuilder.withTournamentId(uuid)
+							.withTourRound(round)
+							.withTourTable(table)
+							.withStatus(Status.PENDING)
+							.withResult(Result.NOT_FINISHED)
+							.build();
+					if (round == 1) {
+						matchBuilder
+								.withStatus(Status.READY)
+								.withTeamOne(teamNames[2 * (table - 1)])
+								.withTeamTwo(teamNames[2 * table - 1]);
+					}
+					matches.add(matchBuilder.build());
 				}
-				matches.add(matchBuilder.build());
+				tableCount = tableCount / 2;
 			}
-			tableCount = tableCount / 2;
-		}
+			logger.info("created a tournament with matches:{}",matches);
+			matchRepository.saveAll(matches);
 
-		matchRepository.saveAll(matches);
+			int userId=userRepository.getUserIdByUserName(userName);
+			TournamentDO.TournamentBuilder tournamentBuilder = TournamentDO.builder();
+			tournamentBuilder.withTournamentId(uuid)
+					.withFormat(ctr.getFormat())
+					.withUserId(userId)
+					.build();
+			tournamentRepository.save(tournamentBuilder.build());
+		}
+		else if(ctr.getFormat().equals("CONSOLATION")) {
+			throw new FormatNotSupportException(ctr.getFormat());
+		}
+		else {
+			throw new FormatNotSupportException(ctr.getFormat());
+		}
 
 		return CreateTournamentResponseDTO.builder()
 				.withTournamentId(uuid)
+				.withUserName(userName)
 				.build();
 	}
 

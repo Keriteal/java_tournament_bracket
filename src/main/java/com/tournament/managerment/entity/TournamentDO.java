@@ -10,23 +10,24 @@ import java.sql.Timestamp;
 @Table(name = "tournament_record")
 
 public class TournamentDO {
-    public enum tournamentFormat {
-        SINGLE, CONSOLATION
-    }
 
     @Id
     private String tournamentId;
     @Column(nullable = false)
     private int userId;         //user_record表的外键  暂不设置
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private tournamentFormat format;
+    private String format;
     @CreationTimestamp
     private Timestamp timeCreate;
     @UpdateTimestamp
     private Timestamp timeModified;
 
     public TournamentDO() {
+    }
+    public TournamentDO(String tournamentId, int userId, String format) {
+        this.tournamentId=tournamentId;
+        this.userId=userId;
+        this.format=format;
     }
 
     public String getTournamentId() {
@@ -45,11 +46,11 @@ public class TournamentDO {
         this.userId = userId;
     }
 
-    public tournamentFormat getFormat() {
+    public String getFormat() {
         return format;
     }
 
-    public void setFormat(tournamentFormat format) {
+    public void setFormat(String format) {
         this.format = format;
     }
 
@@ -87,7 +88,7 @@ public class TournamentDO {
     public static final class TournamentBuilder {
         private String tournamentId;
         private int userId; //user_record表的外键
-        private tournamentFormat format;
+        private String format;
         private Timestamp timeCreate;
         private Timestamp timeModified;
 
@@ -108,7 +109,7 @@ public class TournamentDO {
             return this;
         }
 
-        public TournamentBuilder withFormat(tournamentFormat format) {
+        public TournamentBuilder withFormat(String format) {
             this.format = format;
             return this;
         }

@@ -4,25 +4,29 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class TournamentListDTO {
-	private List<String> tournaments = new LinkedList<String>();
-	
-	public TournamentListDTO(List<String> tournaments) {
-		this.tournaments = tournaments;
+	private List<String> tournamentId = new LinkedList<>();
+	private List<String> format = new LinkedList<>();
+
+	public TournamentListDTO(){};
+
+	public TournamentListDTO(List<String> tournamentId, List<String> format) {
+		this.tournamentId = tournamentId;
+		this.format = format;
 	}
 
-	public void addTournament(String tournamentId) {
-		this.tournaments.add(tournamentId);
+	public List<String> getTournamentId() {
+		return tournamentId;
 	}
 
-	public void addTournament(TournamentInfoDTO tournament) {
-		this.tournaments.add(tournament.getTournamentId());
-	}
-	public List<String> getTournaments() {
-		return tournaments;
+	public void setTournamentId(List<String> tournamentId) {
+		this.tournamentId = tournamentId;
 	}
 
-	public void setTournaments(List<String> tournaments) {
-		this.tournaments = tournaments;
+	public List<String> getFormat() {
+		return format;
 	}
-	
+
+	public void setFormat(List<String> format) {
+		this.format = format;
+	}
 }

@@ -28,9 +28,7 @@ public class MatchDO {
 	private int matchRound;
 	@Column(nullable = false)
 	private int matchTable;
-	@Column(nullable = false)
 	private String teamOne;
-	@Column(nullable = false)
 	private String teamTwo;
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)

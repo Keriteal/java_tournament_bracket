@@ -1,11 +1,11 @@
-- [x] 登录  POST /user
+- [x] user login    POST /user
 
-- [ ] 获取所有tournaments GET /alltournaments     
+- [x] get all tournament    GET /alltournament     
 
-- [ ] 获取一轮tournament的信息  GET /tournament/:id
+- [ ] get all matches' information of the tournament    GET /tournament/:id
 
-- [ ] 获取队伍的信息 GET /team/:teamName
+- [ ] get information of the team    GET /team/:teamName
 
-- [ ] creat tournament POST /tournament
+- [x] creat one tournament    POST /tournament/:userName
 
-- [ ] set result Post /tournament/:id/:round/:table
+- [ ] set result of the match    Post /tournament/:id/:round/:table

@@ -1,5 +1,6 @@
 package com.tournament.managerment.controller;
 
+import com.tournament.managerment.exception.tournament.FormatNotSupportException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -50,14 +51,6 @@ public class MatchController {
 		this.matchService = matchService;
 	}
 
-	@ApiOperation("获取比赛列表")
-	@GetMapping(value = "", produces = { MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<TournamentListDTO> getTournaments() {
-		TournamentListDTO tournamentList = matchService.getTournamentList();
-
-		return ResponseEntity.ok(tournamentList);
-	}
-
 	@ApiOperation(value = "获取比赛信息")
 	@ApiResponses({ @ApiResponse(responseCode = "200", description = "找到指定比赛"),
 			@ApiResponse(responseCode = "404", description = "找不到比赛") })
@@ -93,12 +86,14 @@ public class MatchController {
 		return ResponseEntity.ok(responseDTO);
 	}
 
-	// 安排一场比赛
-	@ApiOperation("安排一场比赛")
-	@PostMapping(value = "", produces = { MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<CreateTournamentResponseDTO> createTournament(@RequestBody @Valid CreateTournamentRequestDTO request)
-			throws InvalidTeamCountException {
-		CreateTournamentResponseDTO createTournamentResponse = matchService.createTournament(request);
+	// 安排一次锦标赛
+	@ApiOperation("安排一次锦标赛")
+	@PostMapping(value = "/{userName}", produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<CreateTournamentResponseDTO> createTournament(@ApiParam("UserName") @PathVariable String userName,
+																		@RequestBody @Valid CreateTournamentRequestDTO request)
+			throws InvalidTeamCountException, FormatNotSupportException {
+		logger.info("userName:{} create a tournament",userName);
+		CreateTournamentResponseDTO createTournamentResponse = matchService.createTournament(userName, request);
 		return ResponseEntity.ok(createTournamentResponse);
 	}
 

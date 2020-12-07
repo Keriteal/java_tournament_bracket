@@ -11,18 +11,21 @@ public class TournamentInfoDTO {
 	}
 
 	private String tournamentId;
-	private List<String> teams = new LinkedList<String>();
-	private List<RoundInfo> rounds = new LinkedList<RoundInfo>();
+	private String format;
+	private List<String> teams = new LinkedList<>();
+	private List<RoundInfo> rounds = new LinkedList<>();
 	private String winner;
 	private Status status;
 
-	@Generated("SparkTools")
-	private TournamentInfoDTO(Builder builder) {
-		this.tournamentId = builder.tournamentId;
-		this.teams = builder.teams;
-		this.rounds = builder.rounds;
-		this.winner = builder.winner;
-		this.status = builder.status;
+	public TournamentInfoDTO() {}
+
+	public TournamentInfoDTO(String tournamentId, String format, List<String> teams, List<RoundInfo> rounds, String winner, Status status) {
+		this.tournamentId=tournamentId;
+		this.format=format;
+		this.teams=teams;
+		this.rounds=rounds;
+		this.winner=winner;
+		this.status=status;
 	}
 
 	public String getTournamentId() {
@@ -31,6 +34,14 @@ public class TournamentInfoDTO {
 
 	public void setTournamentId(String tournamentId) {
 		this.tournamentId = tournamentId;
+	}
+
+	public String getFormat() {
+		return format;
+	}
+
+	public void setFormat(String format) {
+		this.format = format;
 	}
 
 	public List<String> getTeams() {
@@ -65,32 +76,32 @@ public class TournamentInfoDTO {
 		this.status = status;
 	}
 
-	/**
-	 * Creates builder to build {@link TournamentInfoDTO}.
-	 * 
-	 * @return created builder
-	 */
-	@Generated("SparkTools")
 	public static Builder builder() {
 		return new Builder();
 	}
 
-	/**
-	 * Builder to build {@link TournamentInfoDTO}.
-	 */
-	@Generated("SparkTools")
 	public static final class Builder {
 		private String tournamentId;
-		private List<String> teams = Collections.emptyList();
-		private List<RoundInfo> rounds = Collections.emptyList();
+		private String format;
+		private List<String> teams = new LinkedList<>();
+		private List<RoundInfo> rounds = new LinkedList<>();
 		private String winner;
 		private Status status;
 
 		private Builder() {
 		}
 
+		public static Builder aTournamentInfoDTO() {
+			return new Builder();
+		}
+
 		public Builder withTournamentId(String tournamentId) {
 			this.tournamentId = tournamentId;
+			return this;
+		}
+
+		public Builder withFormat(String format) {
+			this.format = format;
 			return this;
 		}
 
@@ -115,8 +126,14 @@ public class TournamentInfoDTO {
 		}
 
 		public TournamentInfoDTO build() {
-			return new TournamentInfoDTO(this);
+			TournamentInfoDTO tournamentInfoDTO = new TournamentInfoDTO();
+			tournamentInfoDTO.setTournamentId(tournamentId);
+			tournamentInfoDTO.setFormat(format);
+			tournamentInfoDTO.setTeams(teams);
+			tournamentInfoDTO.setRounds(rounds);
+			tournamentInfoDTO.setWinner(winner);
+			tournamentInfoDTO.setStatus(status);
+			return tournamentInfoDTO;
 		}
 	}
-
 }

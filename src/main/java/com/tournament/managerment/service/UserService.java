@@ -15,5 +15,5 @@ public interface UserService {
         throws LoginErrorException;
 
     //获取该user主办的tournaments
-    List<String> getTournamentsHost(String userName);
+    List<String> getHostedTournament(String userName);
 }

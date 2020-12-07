@@ -5,7 +5,7 @@ import java.util.List;
 
 public class UserLoginResponseDTO {
     private String userName;
-    private List<String> tournamentsHost = new LinkedList<>();
+    private List<String> hostedTournament = new LinkedList<>();
 
     public String getUserName() {
         return userName;
@@ -15,21 +15,22 @@ public class UserLoginResponseDTO {
         this.userName = userName;
     }
 
-    public List<String> getTournamentsHost() {
-        return tournamentsHost;
+    public List<String> getHostedTournament() {
+        return hostedTournament;
     }
 
-    public void setTournamentsHost(List<String> tournamentsHost) {
-        this.tournamentsHost = tournamentsHost;
+    public void setHostedTournament(List<String> hostedTournament) {
+        this.hostedTournament = hostedTournament;
     }
 
     public static Builder builder() {
         return new Builder();
     }
 
+
     public static final class Builder {
         private String userName;
-        private List<String> tournamentsHost = new LinkedList<>();
+        private List<String> hostedTournament = new LinkedList<>();
 
         private Builder() {
         }
@@ -43,15 +44,15 @@ public class UserLoginResponseDTO {
             return this;
         }
 
-        public Builder withTournamentsHost(List<String> tournamentsHost) {
-            this.tournamentsHost = tournamentsHost;
+        public Builder withHostedTournament(List<String> hostedTournament) {
+            this.hostedTournament = hostedTournament;
             return this;
         }
 
         public UserLoginResponseDTO build() {
             UserLoginResponseDTO userLoginResponseDTO = new UserLoginResponseDTO();
             userLoginResponseDTO.setUserName(userName);
-            userLoginResponseDTO.setTournamentsHost(tournamentsHost);
+            userLoginResponseDTO.setHostedTournament(hostedTournament);
             return userLoginResponseDTO;
         }
     }

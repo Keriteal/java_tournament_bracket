@@ -20,5 +20,9 @@ public interface UserRepository extends JpaRepository<UserDO, String> {
 
     //通过userName从tournament_record表中获取记录,该用户主办的tournament
     @Query(value = "SELECT tour.tournamentId FROM TournamentDO tour, UserDO user WHERE tour.userId = user.userId AND user.userName = :userName")
-    List<String> getTournamentsHostByUserName(@Param("userName") String userName);
+    List<String> getHostedTournamentByUserName(@Param("userName") String userName);
+
+    //获取userName对应的userId
+    @Query(value = "SELECT user.userId FROM UserDO user WHERE user.userName = :userName")
+    int getUserIdByUserName(@Param("userName") String userName);
 }

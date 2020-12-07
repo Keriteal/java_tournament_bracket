@@ -4,11 +4,7 @@ import javax.annotation.Generated;
 
 public class CreateTournamentResponseDTO {
 	private String tournamentId;
-
-	@Generated("SparkTools")
-	private CreateTournamentResponseDTO(Builder builder) {
-		this.tournamentId = builder.tournamentId;
-	}
+	private String userName;
 
 	public String getTournamentId() {
 		return tournamentId;
@@ -18,23 +14,28 @@ public class CreateTournamentResponseDTO {
 		this.tournamentId = tournamentId;
 	}
 
-	/**
-	 * Creates builder to build {@link CreateTournamentResponseDTO}.
-	 * @return created builder
-	 */
-	@Generated("SparkTools")
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
 	public static Builder builder() {
 		return new Builder();
 	}
 
-	/**
-	 * Builder to build {@link CreateTournamentResponseDTO}.
-	 */
-	@Generated("SparkTools")
+
 	public static final class Builder {
 		private String tournamentId;
+		private String userName;
 
 		private Builder() {
+		}
+
+		public static Builder aCreateTournamentResponseDTO() {
+			return new Builder();
 		}
 
 		public Builder withTournamentId(String tournamentId) {
@@ -42,8 +43,16 @@ public class CreateTournamentResponseDTO {
 			return this;
 		}
 
+		public Builder withUserName(String userName) {
+			this.userName = userName;
+			return this;
+		}
+
 		public CreateTournamentResponseDTO build() {
-			return new CreateTournamentResponseDTO(this);
+			CreateTournamentResponseDTO createTournamentResponseDTO = new CreateTournamentResponseDTO();
+			createTournamentResponseDTO.setTournamentId(tournamentId);
+			createTournamentResponseDTO.setUserName(userName);
+			return createTournamentResponseDTO;
 		}
 	}
 }

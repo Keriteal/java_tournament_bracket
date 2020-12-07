@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
     public UserLoginResponseDTO userLogin(UserLoginRequestDTO loginInfo) throws LoginErrorException {
         //先判断账号是否存在
         boolean isExist=isUserNameExist(loginInfo.getUserName());
-        List<String> tournamentsHost=new LinkedList<>();
+        List<String> hostedTournament=new LinkedList<>();
         if(isExist) { //若存在则判断密码是否正确
             UserDO user=userRepository.getUserByNameAndPass(loginInfo.getUserName(), loginInfo.getSecretKey());
             if(user == null) { //若密码错误
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
             }
             else { //若密码正确则获取主办的tournaments
                 logger.info("user:{} login success", loginInfo.getUserName());
-                tournamentsHost=getTournamentsHost(loginInfo.getUserName());
+                hostedTournament=getHostedTournament(loginInfo.getUserName());
             }
         }
         else { //若不存在则直接注册并登录
@@ -60,14 +60,14 @@ public class UserServiceImpl implements UserService {
         }
         return UserLoginResponseDTO.builder()
                 .withUserName(loginInfo.getUserName())
-                .withTournamentsHost(tournamentsHost)
+                .withHostedTournament(hostedTournament)
                 .build();
     }
 
     @Override
-    public List<String> getTournamentsHost(String userName) {
-        List<String> tournamentsHost=userRepository.getTournamentsHostByUserName(userName);
-        logger.debug("The user hosts {} tournaments", tournamentsHost.size());
-        return tournamentsHost;
+    public List<String> getHostedTournament(String userName) {
+        List<String> hostedTournament=userRepository.getHostedTournamentByUserName(userName);
+        logger.debug("The user hosts {} tournaments", hostedTournament.size());
+        return hostedTournament;
     }
 }
