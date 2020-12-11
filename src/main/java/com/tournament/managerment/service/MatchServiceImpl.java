@@ -139,7 +139,7 @@ public class MatchServiceImpl implements MatchService {
 		int teamCount = Array.getLength(ctr.getTeams());
 
 		//队伍数量输入错误2^n
-		if ((teamCount & (teamCount - 1)) != 0) {
+		if ((teamCount & (teamCount - 1)) != 0 || teamCount <= 1) {
 			throw new InvalidTeamCountException(teamCount);
 		}
 
