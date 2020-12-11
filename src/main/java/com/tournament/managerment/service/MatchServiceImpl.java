@@ -5,9 +5,9 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.tournament.managerment.dto.*;
 import com.tournament.managerment.entity.TournamentDO;
-import com.tournament.managerment.exception.tournament.FormatNotSupportException;
-import com.tournament.managerment.exception.tournament.TournamentNotFoundException;
+import com.tournament.managerment.exception.tournament.*;
 import com.tournament.managerment.repository.TournamentRepository;
 import com.tournament.managerment.repository.UserRepository;
 import org.slf4j.Logger;
@@ -15,16 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.tournament.managerment.dto.CreateTournamentRequestDTO;
-import com.tournament.managerment.dto.CreateTournamentResponseDTO;
-import com.tournament.managerment.dto.RoundInfo;
-import com.tournament.managerment.dto.SetMatchResultResponseDTO;
-import com.tournament.managerment.dto.TournamentInfoDTO;
 import com.tournament.managerment.entity.MatchDO;
 import com.tournament.managerment.entity.MatchDO.Result;
 import com.tournament.managerment.entity.MatchDO.Status;
-import com.tournament.managerment.exception.tournament.InvalidTeamCountException;
-import com.tournament.managerment.exception.tournament.MatchNotFoundException;
 import com.tournament.managerment.handler.BracketSocketEventHandler;
 import com.tournament.managerment.repository.MatchRepository;
 import com.tournament.managerment.util.UuidUtil;
@@ -48,7 +41,7 @@ public class MatchServiceImpl implements MatchService {
 
 
 	@Override
-	public TournamentInfoDTO getTournamentInfo(String tournamentId, String userName) throws TournamentNotFoundException {
+	public TournamentInfoDTO getTournamentInfo(String tournamentId, String userName) throws TournamentNotFoundException, TeamNotFoundException {
 
 		TournamentDO tournamentDO = tournamentRepository.getTournamentByTournamentId(tournamentId);
 		if(tournamentDO == null) {
@@ -119,12 +112,27 @@ public class MatchServiceImpl implements MatchService {
 		else
 			isHosted = true;
 
+		//Get team information
+		List<TeamInfoDTO> teamInfo = new LinkedList<>();
+		TeamServiceImpl ts = new TeamServiceImpl(matchRepository);
+		TeamInfoDTO temp=new TeamInfoDTO();
+		for(String teamName : teams) {
+			try{
+				temp = ts.getTeamInfo(teamName);
+				teamInfo.add(temp);
+			}
+			catch(TeamNotFoundException e) {
+				throw new TeamNotFoundException(teamName);
+			}
+		}
+
 
 		TournamentInfoDTO info = TournamentInfoDTO.builder()
 				.withTournamentId(tournamentId)
 				.withFormat(format)
 				.withRounds(Arrays.asList(rounds))
 				.withTeams(teams)
+				.withTeamInfo(teamInfo)
 				.withStatus(status)
 				.withWinner(winner)
 				.withIsHosted(isHosted)

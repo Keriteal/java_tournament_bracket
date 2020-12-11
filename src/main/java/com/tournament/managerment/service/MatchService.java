@@ -6,13 +6,10 @@ import com.tournament.managerment.dto.SetMatchResultResponseDTO;
 import com.tournament.managerment.dto.TournamentInfoDTO;
 import com.tournament.managerment.dto.TournamentListDTO;
 import com.tournament.managerment.entity.MatchDO;
-import com.tournament.managerment.exception.tournament.FormatNotSupportException;
-import com.tournament.managerment.exception.tournament.InvalidTeamCountException;
-import com.tournament.managerment.exception.tournament.MatchNotFoundException;
-import com.tournament.managerment.exception.tournament.TournamentNotFoundException;
+import com.tournament.managerment.exception.tournament.*;
 
 public interface MatchService {
-	TournamentInfoDTO getTournamentInfo(String tournamentId, String userName) throws TournamentNotFoundException;
+	TournamentInfoDTO getTournamentInfo(String tournamentId, String userName) throws TournamentNotFoundException, TeamNotFoundException;
 
 	CreateTournamentResponseDTO createTournament(String userName, CreateTournamentRequestDTO ctr)
             throws InvalidTeamCountException, FormatNotSupportException;

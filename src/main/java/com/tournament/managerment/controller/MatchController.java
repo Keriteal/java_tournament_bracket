@@ -1,6 +1,6 @@
 package com.tournament.managerment.controller;
 
-import com.tournament.managerment.exception.tournament.FormatNotSupportException;
+import com.tournament.managerment.exception.tournament.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -22,9 +22,6 @@ import com.tournament.managerment.dto.WinnerEnum;
 import com.tournament.managerment.entity.MatchDO;
 import com.tournament.managerment.exception.BaseException;
 import com.tournament.managerment.exception.MissingParamException;
-import com.tournament.managerment.exception.tournament.InvalidTeamCountException;
-import com.tournament.managerment.exception.tournament.MatchNotFoundException;
-import com.tournament.managerment.exception.tournament.TournamentNotFoundException;
 import com.tournament.managerment.service.MatchService;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -50,7 +47,7 @@ public class MatchController {
 	@GetMapping(value = "/{id}/{userName}", produces = { MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<TournamentInfoDTO> findTournamentById(@ApiParam("TournamentId") @PathVariable String id,
 																@ApiParam("UserName") @PathVariable String userName)
-			throws TournamentNotFoundException {
+			throws TournamentNotFoundException, TeamNotFoundException {
 		logger.info("user({}):Get tournament info of {}",userName,id);
 		TournamentInfoDTO tournament = matchService.getTournamentInfo(id,userName);
 

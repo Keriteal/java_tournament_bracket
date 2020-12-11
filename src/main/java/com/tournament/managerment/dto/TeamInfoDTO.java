@@ -18,6 +18,8 @@ public final class TeamInfoDTO {
 	@ApiModelProperty("赢下的比赛")
 	private List<String> winnedTournament;
 
+	public TeamInfoDTO(){}
+
 	@Generated("SparkTools")
 	private TeamInfoDTO(Builder builder) {
 		this.teamName = builder.teamName;
