@@ -8,4 +8,4 @@
 
 - [x] create one tournament    POST /tournament/:userName
 
-- [x] set result of the match    Post /tournament/:id/:round/:table
+- [x] set result of the match    POST /tournament/:id/:round/:table

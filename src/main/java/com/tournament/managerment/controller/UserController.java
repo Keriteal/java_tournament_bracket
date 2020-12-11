@@ -19,6 +19,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/user")
 @Api(tags = "用户相关")
+@CrossOrigin
 public class UserController {
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;

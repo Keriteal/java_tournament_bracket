@@ -61,6 +61,7 @@ public class UserServiceImpl implements UserService {
         return UserLoginResponseDTO.builder()
                 .withUserName(loginInfo.getUserName())
                 .withHostedTournament(hostedTournament)
+                .withMsg("success")
                 .build();
     }
 

@@ -20,6 +20,7 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/team")
 @Api(tags = "队伍相关")
+@CrossOrigin
 public class TeamController {
 	private final Logger logger = LoggerFactory.getLogger(TeamController.class);
 	private final TeamService teamService;

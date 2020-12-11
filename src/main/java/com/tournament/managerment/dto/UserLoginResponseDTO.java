@@ -6,6 +6,7 @@ import java.util.List;
 public class UserLoginResponseDTO {
     private String userName;
     private List<String> hostedTournament = new LinkedList<>();
+    private String msg;
 
     public String getUserName() {
         return userName;
@@ -23,6 +24,14 @@ public class UserLoginResponseDTO {
         this.hostedTournament = hostedTournament;
     }
 
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
     public static Builder builder() {
         return new Builder();
     }
@@ -31,6 +40,7 @@ public class UserLoginResponseDTO {
     public static final class Builder {
         private String userName;
         private List<String> hostedTournament = new LinkedList<>();
+        private String msg;
 
         private Builder() {
         }
@@ -49,10 +59,16 @@ public class UserLoginResponseDTO {
             return this;
         }
 
+        public Builder withMsg(String msg) {
+            this.msg = msg;
+            return this;
+        }
+
         public UserLoginResponseDTO build() {
             UserLoginResponseDTO userLoginResponseDTO = new UserLoginResponseDTO();
             userLoginResponseDTO.setUserName(userName);
             userLoginResponseDTO.setHostedTournament(hostedTournament);
+            userLoginResponseDTO.setMsg(msg);
             return userLoginResponseDTO;
         }
     }

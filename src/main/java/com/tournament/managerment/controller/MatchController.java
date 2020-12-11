@@ -9,13 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.tournament.managerment.dto.CreateTournamentRequestDTO;
 import com.tournament.managerment.dto.CreateTournamentResponseDTO;
@@ -41,6 +35,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/tournament")
 @Api(tags = "比赛相关")
+@CrossOrigin
 public class MatchController {
 	private final Logger logger = LoggerFactory.getLogger(MatchController.class);
 
