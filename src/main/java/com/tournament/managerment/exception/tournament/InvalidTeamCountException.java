@@ -8,7 +8,7 @@ public class InvalidTeamCountException extends BaseException {
 	private static final long serialVersionUID = -2310054206639152651L;
 
 	public InvalidTeamCountException(int teamCount) {
-		super(HttpStatus.BAD_REQUEST, "Invalid team count: " + teamCount);
+		super(HttpStatus.ACCEPTED, "Invalid team count: " + teamCount);
 	}
 
 }

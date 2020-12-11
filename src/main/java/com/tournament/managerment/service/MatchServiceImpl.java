@@ -189,6 +189,7 @@ public class MatchServiceImpl implements MatchService {
 		return CreateTournamentResponseDTO.builder()
 				.withTournamentId(uuid)
 				.withUserName(userName)
+				.withMsg("success")
 				.build();
 	}
 
