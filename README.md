@@ -2,7 +2,7 @@
 
 - [x] get all tournament    GET /alltournament     
 
-- [x] get all matches' information of the tournament    GET /tournament/:id
+- [x] get all matches' information of the tournament    GET /tournament/:id/:userName
 
 - [x] get information of the team    GET /team/:teamName
 

@@ -48,7 +48,7 @@ public class MatchServiceImpl implements MatchService {
 
 
 	@Override
-	public TournamentInfoDTO getTournamentInfo(String tournamentId) throws TournamentNotFoundException {
+	public TournamentInfoDTO getTournamentInfo(String tournamentId, String userName) throws TournamentNotFoundException {
 
 		TournamentDO tournamentDO = tournamentRepository.getTournamentByTournamentId(tournamentId);
 		if(tournamentDO == null) {
@@ -58,6 +58,7 @@ public class MatchServiceImpl implements MatchService {
 		String format = tournamentRepository.getFormatByTournamentId(tournamentId);
 		List<MatchDO> matches = matchRepository.findMatchByTournamentId(tournamentId);
 		List<String> teams = matchRepository.getTeamsByTournamentId(tournamentId);
+		boolean isHosted = false;
 
 		int lastRound = -1;
 		if (teams.indexOf("") != -1) {
@@ -111,6 +112,14 @@ public class MatchServiceImpl implements MatchService {
 			}
 		}
 
+		//Get isHosted by user
+		TournamentDO tournament = tournamentRepository.getTournamentByUserNameAndTournamentId(tournamentId, userName);
+		if(tournament == null)
+			isHosted = false;
+		else
+			isHosted = true;
+
+
 		TournamentInfoDTO info = TournamentInfoDTO.builder()
 				.withTournamentId(tournamentId)
 				.withFormat(format)
@@ -118,6 +127,7 @@ public class MatchServiceImpl implements MatchService {
 				.withTeams(teams)
 				.withStatus(status)
 				.withWinner(winner)
+				.withIsHosted(isHosted)
 				.build();
 		return info;
 	}

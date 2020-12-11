@@ -25,4 +25,5 @@ public interface UserRepository extends JpaRepository<UserDO, String> {
     //获取userName对应的userId
     @Query(value = "SELECT user.userId FROM UserDO user WHERE user.userName = :userName")
     int getUserIdByUserName(@Param("userName") String userName);
+
 }

@@ -12,7 +12,7 @@ import com.tournament.managerment.exception.tournament.MatchNotFoundException;
 import com.tournament.managerment.exception.tournament.TournamentNotFoundException;
 
 public interface MatchService {
-	TournamentInfoDTO getTournamentInfo(String tournamentId) throws TournamentNotFoundException;
+	TournamentInfoDTO getTournamentInfo(String tournamentId, String userName) throws TournamentNotFoundException;
 
 	CreateTournamentResponseDTO createTournament(String userName, CreateTournamentRequestDTO ctr)
             throws InvalidTeamCountException, FormatNotSupportException;

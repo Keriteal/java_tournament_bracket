@@ -47,11 +47,12 @@ public class MatchController {
 	}
 
 	@ApiOperation(value = "获取比赛信息")
-	@GetMapping(value = "/{id}", produces = { MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<TournamentInfoDTO> findTournamentById(@ApiParam("TournamentId") @PathVariable String id)
+	@GetMapping(value = "/{id}/{userName}", produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<TournamentInfoDTO> findTournamentById(@ApiParam("TournamentId") @PathVariable String id,
+																@ApiParam("UserName") @PathVariable String userName)
 			throws TournamentNotFoundException {
-		logger.info("Get tournament info of " + id);
-		TournamentInfoDTO tournament = matchService.getTournamentInfo(id);
+		logger.info("user({}):Get tournament info of {}",userName,id);
+		TournamentInfoDTO tournament = matchService.getTournamentInfo(id,userName);
 
 		return ResponseEntity.ok(tournament);
 	}

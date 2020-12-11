@@ -16,16 +16,18 @@ public class TournamentInfoDTO {
 	private List<RoundInfo> rounds = new LinkedList<>();
 	private String winner;
 	private Status status;
+	private boolean isHosted;
 
 	public TournamentInfoDTO() {}
 
-	public TournamentInfoDTO(String tournamentId, String format, List<String> teams, List<RoundInfo> rounds, String winner, Status status) {
+	public TournamentInfoDTO(String tournamentId, String format, List<String> teams, List<RoundInfo> rounds, String winner, Status status, boolean isHosted) {
 		this.tournamentId=tournamentId;
 		this.format=format;
 		this.teams=teams;
 		this.rounds=rounds;
 		this.winner=winner;
 		this.status=status;
+		this.isHosted=isHosted;
 	}
 
 	public String getTournamentId() {
@@ -76,9 +78,18 @@ public class TournamentInfoDTO {
 		this.status = status;
 	}
 
+	public boolean isHosted() {
+		return isHosted;
+	}
+
+	public void setHosted(boolean hosted) {
+		isHosted = hosted;
+	}
+
 	public static Builder builder() {
 		return new Builder();
 	}
+
 
 	public static final class Builder {
 		private String tournamentId;
@@ -87,6 +98,7 @@ public class TournamentInfoDTO {
 		private List<RoundInfo> rounds = new LinkedList<>();
 		private String winner;
 		private Status status;
+		private boolean isHosted;
 
 		private Builder() {
 		}
@@ -125,15 +137,13 @@ public class TournamentInfoDTO {
 			return this;
 		}
 
+		public Builder withIsHosted(boolean isHosted) {
+			this.isHosted = isHosted;
+			return this;
+		}
+
 		public TournamentInfoDTO build() {
-			TournamentInfoDTO tournamentInfoDTO = new TournamentInfoDTO();
-			tournamentInfoDTO.setTournamentId(tournamentId);
-			tournamentInfoDTO.setFormat(format);
-			tournamentInfoDTO.setTeams(teams);
-			tournamentInfoDTO.setRounds(rounds);
-			tournamentInfoDTO.setWinner(winner);
-			tournamentInfoDTO.setStatus(status);
-			return tournamentInfoDTO;
+			return new TournamentInfoDTO(tournamentId, format, teams, rounds, winner, status, isHosted);
 		}
 	}
 }
