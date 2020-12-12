@@ -105,6 +105,10 @@ public class MatchServiceImpl implements MatchService {
 			}
 		}
 
+		if(status == TournamentInfoDTO.Status.ENDED) {
+			rounds[lastRound].setTeam(0, winner);
+		}
+
 		//Get isHosted by user
 		TournamentDO tournament = tournamentRepository.getTournamentByUserNameAndTournamentId(tournamentId, userName);
 		if(tournament == null)
