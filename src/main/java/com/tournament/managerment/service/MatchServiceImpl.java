@@ -73,10 +73,10 @@ public class MatchServiceImpl implements MatchService {
 		logger.info("tournamentId:{} lastRound:{}", tournamentId, lastRound);
 
 		// Get tournament bracket
-		RoundInfo[] rounds = new RoundInfo[lastRound];
+		RoundInfo[] rounds = new RoundInfo[lastRound+1];
 		if(format.equals("SINGLE")){
-			int tableCount = 2;
-			for (int round = lastRound-1; round >= 0; round--) {  //初始化rounds
+			int tableCount = 1;
+			for (int round = lastRound; round >= 0; round--) {  //初始化rounds
 				rounds[round] = new RoundInfo(tableCount);
 				tableCount = tableCount * 2;
 			}

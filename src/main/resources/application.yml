@@ -8,7 +8,22 @@ spring:
     url: "jdbc:mysql://127.0.0.1:3306/tournament_bracket?serverTimezone=UTC"
     username: wx
     password: wuxiao.04092313
+
   jpa:
     show-sql: false
     hibernate:
       ddl-auto: update
+
+#### 配置数据库的连接方式   Grandle工具创建项目
+#sping:
+#  datasource:
+#    driver-class-name: org.sqlite.JDBC
+#    url: jdbc:sqlite:/tournament.db
+#    username:
+#    password:
+#  ### sqlite需要自己配置连接方式  编写SQLiteDialect类
+#  jpa:
+#    database-platform: com.restart1025.sqlite.SQLiteDialect
+#    hibernate:
+#      ddl-auto: update
+#    show-sql: true
