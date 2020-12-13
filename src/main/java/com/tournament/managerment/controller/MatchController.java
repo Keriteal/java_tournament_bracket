@@ -28,6 +28,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Null;
 
 @RestController
 @RequestMapping("/tournament")
@@ -44,11 +45,16 @@ public class MatchController {
 	}
 
 	@ApiOperation(value = "获取比赛信息")
-	@GetMapping(value = "/{id}/{userName}", produces = { MediaType.APPLICATION_JSON_VALUE })
+	@GetMapping(value = "/{id}", produces = { MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<TournamentInfoDTO> findTournamentById(@ApiParam("TournamentId") @PathVariable String id,
-																@ApiParam("UserName") @PathVariable String userName)
-			throws TournamentNotFoundException, TeamNotFoundException {
+																@ApiParam("UserName") @RequestHeader("User-Name") String userName)
+			throws TournamentNotFoundException, TeamNotFoundException, MissingUserException {
 		logger.info("user({}):Get tournament info of {}",userName,id);
+
+		if(userName.equals("")) {
+			throw new MissingUserException();
+		}
+
 		TournamentInfoDTO tournament = matchService.getTournamentInfo(id,userName);
 
 		return ResponseEntity.ok(tournament);
@@ -79,11 +85,14 @@ public class MatchController {
 
 	// 安排一次锦标赛
 	@ApiOperation("安排一次锦标赛")
-	@PostMapping(value = "/{userName}", produces = { MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<CreateTournamentResponseDTO> createTournament(@ApiParam("UserName") @PathVariable String userName,
+	@PostMapping(value = "", produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<CreateTournamentResponseDTO> createTournament(@ApiParam("UserName") @RequestHeader("User-Name") String userName,
 																		@RequestBody @Valid CreateTournamentRequestDTO request)
-			throws InvalidTeamCountException, FormatNotSupportException {
+			throws InvalidTeamCountException, FormatNotSupportException, MissingUserException {
 		logger.info("userName:{} create a tournament",userName);
+		if(userName.equals("")) {
+			throw new MissingUserException();
+		}
 		CreateTournamentResponseDTO createTournamentResponse = matchService.createTournament(userName, request);
 		return ResponseEntity.ok(createTournamentResponse);
 	}

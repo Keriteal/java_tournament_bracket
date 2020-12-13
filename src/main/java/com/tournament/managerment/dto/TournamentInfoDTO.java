@@ -1,5 +1,7 @@
 package com.tournament.managerment.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.Generated;
@@ -80,6 +82,10 @@ public class TournamentInfoDTO {
 		this.status = status;
 	}
 
+	@JsonProperty(value = "isHosted")
+	//public boolean getIsHosted(){return isHosted;}
+	//阿里 java开发手册 boolean类型属性值不建议使用is开头，否则会引起rpc框架的序列化异常；
+	//所有的POJO类属性必须使用包装数据类型，如：Boolean
 	public boolean isHosted() {
 		return isHosted;
 	}
