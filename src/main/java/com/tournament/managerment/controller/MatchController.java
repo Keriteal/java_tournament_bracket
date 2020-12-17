@@ -48,7 +48,7 @@ public class MatchController {
 	@GetMapping(value = "/{id}", produces = { MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<TournamentInfoDTO> findTournamentById(@ApiParam("TournamentId") @PathVariable String id,
 																@ApiParam("UserName") @RequestHeader("User-Name") String userName)
-			throws TournamentNotFoundException, TeamNotFoundException, MissingUserException {
+			throws TournamentNotFoundException, TeamNotFoundException, MissingUserException {  //@CookieValue("USERNAME")
 		logger.info("user({}):Get tournament info of {}",userName,id);
 
 		if(userName.equals("")) {
