@@ -4,7 +4,6 @@ import com.tournament.managerment.dto.CreateTournamentRequestDTO;
 import com.tournament.managerment.dto.CreateTournamentResponseDTO;
 import com.tournament.managerment.dto.SetMatchResultResponseDTO;
 import com.tournament.managerment.dto.TournamentInfoDTO;
-import com.tournament.managerment.dto.TournamentListDTO;
 import com.tournament.managerment.entity.MatchDO;
 import com.tournament.managerment.exception.tournament.*;
 
