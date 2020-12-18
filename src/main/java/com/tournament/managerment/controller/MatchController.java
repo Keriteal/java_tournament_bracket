@@ -44,7 +44,7 @@ public class MatchController {
     @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<TournamentInfoDTO> findTournamentById(@ApiParam("TournamentId") @PathVariable String id,
                                                                 @ApiParam("UserName") @RequestHeader(value = "User-Name", required = false) String userName)
-            throws TournamentNotFoundException, TeamNotFoundException, InvalidUserHeaderException {
+            throws TournamentNotFoundException, TeamNotFoundException {
         logger.info("user({}):Get tournament info of {}", userName, id);
 
         TournamentInfoDTO tournament = matchService.getTournamentInfo(id, userName);
@@ -57,7 +57,7 @@ public class MatchController {
     public ResponseEntity<SetMatchResultResponseDTO> setMatchResult(@ApiParam("TournamentId") @PathVariable String id,
                                                                     @ApiParam("Round") @PathVariable Integer round, @ApiParam("Table") @PathVariable Integer table,
                                                                     @RequestBody SetMatchResultRequestDTO req) throws MissingParamException, MatchNotFoundException {
-        MatchDO.Result result = MatchDO.Result.NOT_FINISHED;
+        MatchDO.Result result;
         logger.info("Set result {} ", req.getWinner());
         if (req.getWinner() == WinnerEnum.TEAM_ONE) {
             result = MatchDO.Result.TEAM_ONE;
