@@ -29,14 +29,16 @@ public class MatchServiceImpl implements MatchService {
     private final UserRepository userRepository;
     private final TournamentRepository tournamentRepository;
     private final MatchRepository matchRepository;
+    private final TeamService teamService;
     private final BracketSocketEventHandler socketHandler;
 
     @Autowired
-    public MatchServiceImpl(UserRepository userRepository, TournamentRepository tournamentRepository, MatchRepository matchRepository, BracketSocketEventHandler socketHandler) {
+    public MatchServiceImpl(UserRepository userRepository, TournamentRepository tournamentRepository, MatchRepository matchRepository, BracketSocketEventHandler socketHandler, TeamService teamService) {
         this.userRepository = userRepository;
         this.tournamentRepository = tournamentRepository;
         this.matchRepository = matchRepository;
         this.socketHandler = socketHandler;
+        this.teamService = teamService;
     }
 
 
@@ -70,7 +72,7 @@ public class MatchServiceImpl implements MatchService {
 
         // Get tournament bracket
         RoundInfo[] rounds = new RoundInfo[lastRound + 1];
-        if (format.equals("SINGLE")) {
+        if (format.equalsIgnoreCase("SINGLE")) {
             int tableCount = 1;
             for (int round = lastRound; round >= 0; round--) {  //初始化rounds
                 rounds[round] = new RoundInfo(tableCount);
@@ -81,7 +83,7 @@ public class MatchServiceImpl implements MatchService {
                 rounds[match.getRound() - 1].setTeam((match.getTable() - 1) * 2 + 1, match.getTeamTwo());
             }
             //logger.info("tournamentId:{} rounds:{}", tournamentId, rounds);
-        } else if (format.equals("CONSOLATION")) {
+        } else if (format.equalsIgnoreCase("CONSOLATION")) {
             //安慰赛的tournament bracket获取算法
         } else {
             //其他赛制（可扩展）
@@ -105,18 +107,13 @@ public class MatchServiceImpl implements MatchService {
 
         //Get isHosted by user
         TournamentDO tournament = tournamentRepository.getTournamentByUserNameAndTournamentId(tournamentId, userName);
-        if (tournament == null)
-            isHosted = false;
-        else
-            isHosted = true;
+        isHosted = tournament != null;
 
         //Get team information
         List<TeamInfoDTO> teamInfo = new LinkedList<>();
-        TeamServiceImpl ts = new TeamServiceImpl(matchRepository);
-        TeamInfoDTO temp = new TeamInfoDTO();
         for (String teamName : teams) {
             try {
-                temp = ts.getTeamInfo(teamName);
+                TeamInfoDTO temp = teamService.getTeamInfo(teamName);
                 teamInfo.add(temp);
             } catch (TeamNotFoundException e) {
                 throw new TeamNotFoundException(teamName);
@@ -124,7 +121,7 @@ public class MatchServiceImpl implements MatchService {
         }
 
 
-        TournamentInfoDTO info = TournamentInfoDTO.builder()
+        return TournamentInfoDTO.builder()
                 .withTournamentId(tournamentId)
                 .withFormat(format)
                 .withRounds(Arrays.asList(rounds))
@@ -134,7 +131,6 @@ public class MatchServiceImpl implements MatchService {
                 .withWinner(winner)
                 .withIsHosted(isHosted)
                 .build();
-        return info;
     }
 
     @Override
