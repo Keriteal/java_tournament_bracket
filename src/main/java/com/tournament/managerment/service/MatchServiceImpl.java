@@ -1,26 +1,25 @@
 package com.tournament.managerment.service;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-
 import com.tournament.managerment.dto.*;
+import com.tournament.managerment.entity.MatchDO;
+import com.tournament.managerment.entity.MatchDO.Result;
+import com.tournament.managerment.entity.MatchDO.Status;
 import com.tournament.managerment.entity.TournamentDO;
 import com.tournament.managerment.exception.tournament.*;
+import com.tournament.managerment.repository.MatchRepository;
 import com.tournament.managerment.repository.TournamentRepository;
 import com.tournament.managerment.repository.UserRepository;
+import com.tournament.managerment.util.UuidUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
-import com.tournament.managerment.entity.MatchDO;
-import com.tournament.managerment.entity.MatchDO.Result;
-import com.tournament.managerment.entity.MatchDO.Status;
-import com.tournament.managerment.handler.BracketSocketEventHandler;
-import com.tournament.managerment.repository.MatchRepository;
-import com.tournament.managerment.util.UuidUtil;
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 @Service
 public class MatchServiceImpl implements MatchService {
@@ -30,14 +29,12 @@ public class MatchServiceImpl implements MatchService {
     private final TournamentRepository tournamentRepository;
     private final MatchRepository matchRepository;
     private final TeamService teamService;
-    private final BracketSocketEventHandler socketHandler;
 
     @Autowired
-    public MatchServiceImpl(UserRepository userRepository, TournamentRepository tournamentRepository, MatchRepository matchRepository, BracketSocketEventHandler socketHandler, TeamService teamService) {
+    public MatchServiceImpl(UserRepository userRepository, TournamentRepository tournamentRepository, MatchRepository matchRepository, TeamService teamService) {
         this.userRepository = userRepository;
         this.tournamentRepository = tournamentRepository;
         this.matchRepository = matchRepository;
-        this.socketHandler = socketHandler;
         this.teamService = teamService;
     }
 
@@ -53,7 +50,7 @@ public class MatchServiceImpl implements MatchService {
         String format = tournamentRepository.getFormatByTournamentId(tournamentId);
         List<MatchDO> matches = matchRepository.findMatchByTournamentId(tournamentId);
         List<String> teams = matchRepository.getTeamsByTournamentId(tournamentId);
-        boolean isHosted = false;
+        boolean isHosted;
 
         int lastRound = -1;
         teams.remove("");
@@ -84,9 +81,11 @@ public class MatchServiceImpl implements MatchService {
             }
             //logger.info("tournamentId:{} rounds:{}", tournamentId, rounds);
         } else if (format.equalsIgnoreCase("CONSOLATION")) {
-            //安慰赛的tournament bracket获取算法
+            //TODO 安慰赛的tournament bracket获取算法
+            logger.info("format is CONSOLATION");
         } else {
             //其他赛制（可扩展）
+            logger.info("Other format");
         }
 
         // Get winner
@@ -107,7 +106,7 @@ public class MatchServiceImpl implements MatchService {
 
         //Get isHosted by user
         TournamentDO tournament = tournamentRepository.getTournamentByUserNameAndTournamentId(tournamentId, userName);
-        isHosted = tournament != null;
+        isHosted = tournament != null && StringUtils.hasText(userName);
 
         //Get team information
         List<TeamInfoDTO> teamInfo = new LinkedList<>();
@@ -119,7 +118,6 @@ public class MatchServiceImpl implements MatchService {
                 throw new TeamNotFoundException(teamName);
             }
         }
-
 
         return TournamentInfoDTO.builder()
                 .withTournamentId(tournamentId)
@@ -157,8 +155,7 @@ public class MatchServiceImpl implements MatchService {
                             .withTourRound(round)
                             .withTourTable(table)
                             .withStatus(Status.PENDING)
-                            .withResult(Result.NOT_FINISHED)
-                            .build();
+                            .withResult(Result.NOT_FINISHED);
                     if (round == 1) {
                         matchBuilder
                                 .withStatus(Status.READY)
